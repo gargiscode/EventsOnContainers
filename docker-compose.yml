@@ -17,8 +17,6 @@ services:
       DatabaseUser: sa
       DatabasePassword: ProductApi(!) 
       ExternalCatalogUrl: http://localhost:7004
-
-
     ports: 
       - "7004:80"
     container_name: eventscatalogapi1
@@ -28,7 +26,40 @@ services:
     depends_on:
       - mssqlserver
 
+  webmvc:
+    image: events1/webmvc
+    build:
+      context: .\WebMvc
+      dockerfile: Dockerfile
+    environment:
+      EventUrl: http://catalog
+      IdentityUrl: http://192.168.1.23:7010
+      CallBackUrl: http://localhost:7008
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "7008:80"
+    container_name: webshop
+    networks:
+      - frontend
+    depends_on:
+      - catalog
 
+  tokenserver:
+    build:
+      context: .\TokenServiceApi
+      dockerfile: Dockerfile
+    image: events/tokenapi
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      MvcClient: http://localhost:7600
+    ports:
+      - "7010:80"
+    container_name: eventstokenserviceapi
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      - mssqlserver
 
   mssqlserver:
     image: "mcr.microsoft.com/mssql/server:latest"

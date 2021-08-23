@@ -43,11 +43,48 @@ namespace EventCatalogAPI.Controllers
                 PageSize = items.Count,
                 Count = itemsCount.Result,
                 Data = items
-        };
+            };
 
             return Ok(model);
         }
-        
+
+        [HttpGet("[action]/type/{typeId}/city/{cityId}")]
+        public async Task<IActionResult> Items(
+            int? typeId,
+            int? cityId,
+            [FromQuery] int pageIndex = 0, 
+            [FromQuery] int pageSize = 6)
+        {
+            var query = (IQueryable<EachEvent>)_context.Events;
+            if (typeId.HasValue && typeId != 0)
+            {
+                query = query.Where(c => c.TypeId == typeId);
+            }
+            if (cityId.HasValue && cityId != 0)
+            {
+                query = query.Where(c => c.LocationId == cityId);
+            }
+
+            var itemsCount = query.LongCountAsync();
+            var items = await query
+                        .OrderBy (c=>c.Likes)
+                        .Skip(pageIndex * pageSize)
+                        .Take(pageSize)
+                        .ToListAsync();
+
+            items = ChangePictureUrl(items);
+
+            var model = new PaginatedItemsViewModel
+            {
+                PageIndex = pageIndex,
+                PageSize = items.Count,
+                Count = itemsCount.Result,
+                Data = items
+            };
+
+            return Ok(model);
+        }
+
         [HttpGet("[action]")]
         public async Task<IActionResult> GetByType(
             [FromQuery] int typeId = 0)
@@ -81,6 +118,7 @@ namespace EventCatalogAPI.Controllers
             return Ok(items);
         }
 
+        [HttpGet("[action]")]
         private List<EachEvent> ChangePictureUrl(List<EachEvent> items)
         {
             items.ForEach(item=>
@@ -89,6 +127,21 @@ namespace EventCatalogAPI.Controllers
                 "http://externalcatalogbaseurltobereplaced", _config["ExternalCatalogUrl"]));
             return items;
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> EventTypes()
+        {
+            var types = await _context.EventTypes.ToListAsync();
+            return Ok(types);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> EventLocations()
+        {
+            var types = await _context.EventLocations.ToListAsync();
+            return Ok(types);
+        }
+
     }
 }
     
