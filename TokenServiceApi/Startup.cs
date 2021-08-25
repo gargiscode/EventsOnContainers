@@ -14,7 +14,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TokenServiceApi.Models;
 using TokenServiceApi.Services;
-using Microsoft.IdentityModel.Tokens;
 
 namespace TokenServiceApi
 {
@@ -47,7 +46,8 @@ namespace TokenServiceApi
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             // configure identity server with in-memory stores, keys, clients and scopes
             services.AddIdentityServer()
@@ -59,53 +59,15 @@ namespace TokenServiceApi
                 .AddAspNetIdentity<ApplicationUser>();
 
 
-            var identityUrl = Configuration.GetValue<string>("IdentityUrl");
-            var callBackUrl = Configuration.GetValue<string>("CallBackUrl");
-            services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = "Cookies";
-                options.DefaultChallengeScheme = "oidc";
-
-                //options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                //options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-                //options.DefaultAuthenticateScheme = "Cookies";
-            })
-            .AddCookie("Cookies")
-            .AddOpenIdConnect("oidc", options =>
-            {
-                options.SignInScheme = "Cookies";
-                //options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-
-                options.Authority = identityUrl.ToString();
-                options.SignedOutRedirectUri = callBackUrl.ToString();
-                options.ClientId = "mvc";
-                options.ClientSecret = "secret";
-                options.ResponseType = "code id_token";
-                options.SaveTokens = true;
-                options.GetClaimsFromUserInfoEndpoint = true;
-                options.RequireHttpsMetadata = false;
-                options.Scope.Add("openid");
-                options.Scope.Add("profile");
-                options.Scope.Add("offline_access");
-                options.Scope.Add("basket");
-                options.Scope.Add("order");
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-
-                    NameClaimType = "name",
-                    RoleClaimType = "role"
-                };
-
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.EnvironmentName == "Development")
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+              //  app.UseDatabaseErrorPage();
             }
             else
             {
@@ -116,13 +78,15 @@ namespace TokenServiceApi
 
             // app.UseIdentity(); // not needed, since UseIdentityServer adds the authentication middleware
             app.UseIdentityServer();
-
+            
+            /*
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            */
         }
     }
 }

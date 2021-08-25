@@ -8,16 +8,16 @@ using WebMvc.Models;
 
 namespace WebMvc.Services
 {
-    public class IdentityService : IIdentityService<ApplicationUser>
+    public class IdentityService : IIdentityService<ApplicationUser>        
     {
         public ApplicationUser Get(IPrincipal principal)
         {
-            if (principal is ClaimsPrincipal claims) //if this principal is a claim i.e if it is already a Token then
+            if (principal is ClaimsPrincipal claims) 
             {
-                var user = new ApplicationUser() //a new User,  already a token
+                var user = new ApplicationUser() 
                 {
-                    Email = claims.Claims.FirstOrDefault(x => x.Type == "preferred_username")?.Value ?? "", //Read the first claim, thats the preferred_username(will already be selected) ands thats email address and thast the same thing as id
-                    Id = claims.Claims.FirstOrDefault(x => x.Type == "preferred_username")?.Value ?? "", //same information for both email and id
+                    Email = claims.Claims.FirstOrDefault(x => x.Type == "preferred_username")?.Value ?? "", 
+                    Id = claims.Claims.FirstOrDefault(x => x.Type == "preferred_username")?.Value ?? "", 
                 };
 
                 return user;
@@ -28,4 +28,3 @@ namespace WebMvc.Services
         }
     }
 }
- 

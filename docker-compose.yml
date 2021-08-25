@@ -33,7 +33,7 @@ services:
       dockerfile: Dockerfile
     environment:
       EventUrl: http://catalog
-      IdentityUrl: http://192.168.1.23:7010
+      IdentityUrl: http://192.168.254.25:7010
       CallBackUrl: http://localhost:7008
       ASPNETCORE_ENVIRONMENT: Development
     ports:
@@ -43,6 +43,7 @@ services:
       - frontend
     depends_on:
       - catalog
+      - tokenserver
 
   tokenserver:
     build:
