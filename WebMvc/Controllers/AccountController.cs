@@ -12,9 +12,10 @@ using System.Threading.Tasks;
 
 namespace WebMvc.Controllers
 {
+    [Authorize]
     public class AccountController : Controller
     {
-        [Authorize]
+        
         public async Task<IActionResult> SignIn(string returnUrl)
         {
             var user = User as ClaimsPrincipal;

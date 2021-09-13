@@ -7,7 +7,7 @@
                 @*Changed the controller to event*@
                 <a class="esh-pager-item esh-pager-item--navigable @Model.Previous"
                    id="Previous"
-                   asp-controller="Event"
+                   asp-controller="EventsPage"
                    asp-action="Index"
                    asp-route-page="@(Model.ActualPage -1)"
                    aria-label="Previous">
@@ -21,7 +21,7 @@
                 @*Changed the controller to event*@
                 <a class="esh-pager-item esh-pager-item--navigable @Model.Next"
                    id="Next"
-                   asp-controller="Event"
+                   asp-controller="EventsPage"
                    asp-action="Index"
                    asp-route-page="@(Model.ActualPage + 1)"
                    aria-label="Next">
