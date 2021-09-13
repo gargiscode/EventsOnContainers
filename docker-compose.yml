@@ -45,6 +45,33 @@ services:
       - tokenserver
       - basket.data
 
+  order:
+    build:
+      context: .\OrderApi
+      dockerfile: Dockerfile
+    image: events1/orderapi
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      IdentityUrl: http://192.168.254.25:7010
+      DatabaseServer: mssqlserver
+      DatabaseName: OrdersDb
+      DatabaseUser: sa
+      DatabasePassword: ProductApi(!)
+    ports:
+      - "7026:80"
+    container_name: eventsorderapi
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      - mssqlserver
+      - tokenserver
+
   webmvc:
     image: events1/webmvc
     build:
