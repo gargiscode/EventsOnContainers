@@ -4,3 +4,5 @@ This is a project to demonstrate creation of containers, use of microservices, c
 Demo for Assignment 3A Youtube link https://youtu.be/m49aCTAf9tI
 
 Demo for Assignment 3B Youtube link https://youtu.be/7MdaHQuYz6Q
+
+Demo for Assignment 3C Youtube link https://youtu.be/oeSQBujS8O0
